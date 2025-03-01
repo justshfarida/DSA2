@@ -287,54 +287,5 @@ void tree_breadthfirst_print(node *n) {
  * @return True if the tree is complete, otherwise False.
  */
 bool is_complete_tree(node *n) {
-    if (n == NULL) return true;  // An empty tree is complete
-
-    queue *q = queue_create(fifo);
-    queue_enqueue(q, n);
-
-    int first_leaf_depth = -1;  // Stores the depth of the first leaf
-    int current_depth = 0;      // Tracks the level of nodes being processed
-    bool is_perfect = true;     // Assume the tree is complete unless proven otherwise
-
-    while (!queue_isempty(q)) {
-        int nodes_at_level = 0;  // Count nodes at the current level
-
-        // Count nodes in the queue before processing this level
-        queue *temp_queue = queue_create(fifo);
-        while (!queue_isempty(q)) {
-            queue_enqueue(temp_queue, queue_dequeue(q));
-            nodes_at_level++;
-        }
-
-        // Process all nodes at this level
-        for (int i = 0; i < nodes_at_level; i++) {
-            node *temp = queue_dequeue(temp_queue);
-
-            // If it's a leaf node
-            if (temp->lchild == NULL && temp->rchild == NULL) {
-                if (first_leaf_depth == -1) {
-                    first_leaf_depth = current_depth;  // Store the depth of the first leaf
-                } else if (current_depth != first_leaf_depth) {
-                    queue_delete(q);
-                    queue_delete(temp_queue);
-                    return false;  // Leaves are not at the same depth
-                }
-            } else {
-                // If it's an internal node, it must have both children
-                if (temp->lchild == NULL || temp->rchild == NULL) {
-                    queue_delete(q);
-                    queue_delete(temp_queue);
-                    return false;  // Internal node does not have two children
-                }
-                queue_enqueue(q, temp->lchild);
-                queue_enqueue(q, temp->rchild);
-            }
-        }
-
-        queue_delete(temp_queue);  // Cleanup temporary queue
-        current_depth++;  // Move to the next level
-    }
-
-    queue_delete(q);
-    return is_perfect;
+   
 }
