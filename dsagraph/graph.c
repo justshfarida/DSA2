@@ -136,41 +136,43 @@ bool graph_add_edge(graph *g, int from, int to, int weight) {
  * @param from the source vertex
  * @param to   the destination vertex
  */
-void graph_remove_edge(graph* g, int from, int to) {
+void graph_remove_edge(graph *g, int from, int to) {
+    // Access the adjacency list for 'from'
+    adj_node* head = g->adj_list[from];
+    adj_node* current = head;
+    adj_node* prev = NULL;
 
-    // .... To complete ....
-    adj_node* head=g->adj_list[from];
-
-    adj_node* current =head;
-    adj_node* prev=0;
-    if (head==NULL)
-    {
-        return; // "from" doesn't have neighbours
+    if (head == NULL) {
+        return; // No neighbors for 'from', nothing to remove
     }
-    //if the first node needs to be removed
-    if(current->id==to)
-    {
+
+    // If the first node is the one to remove
+    if (current != NULL && current->id == to) {
         g->adj_list[from] = current->next; // Update head of the list
-        head=current->next;
-        current->next=NULL;
-        free(current);
+        current->next = NULL; // Disconnect the node
+        free(current); // Free the node
         return;
     }
-    // if "to" is not first in the linked list
-    while(current->id!=to)
-    {
-        prev=current;
-        current=current->next;
-        free(current);
+
+    // Traverse the list to find the node to remove
+    while (current != NULL && current->id != to) {
+        prev = current;
+        current = current->next;
     }
-    prev->next=current->next;
-    current->next=NULL;
-       // If the graph is undirected, remove the edge in reverse (from `to` to `from`)
+
+    // If we found the node (i.e., current != NULL)
+    if (current != NULL) {
+        prev->next = current->next; // Remove the node from the list
+        current->next = NULL; // Disconnect the node
+        free(current); // Free the node
+    }
+
+    // If the graph is undirected, remove the reverse edge
     if (g->undirected) {
         graph_remove_edge(g, to, from); // Recursively remove reverse edge
     }
-    
 }
+
 
 /**
  * @brief tell if an edge (from,to) exists
